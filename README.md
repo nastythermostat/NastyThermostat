@@ -46,6 +46,8 @@ The ESP32-C6 reads a DS18B20 temperature sensor and receives setpoints via rotar
 
 ### Pin mapping
 
+![Wiring diagram](img/wiring.jpg)
+
 | Function | GPIO |
 |---|---|
 | TFT CS | 14 |
@@ -61,8 +63,6 @@ The ESP32-C6 reads a DS18B20 temperature sensor and receives setpoints via rotar
 | Encoder DT | 1 |
 | Encoder Button | 4 |
 | DS18B20 | 9 |
-
-![Wiring diagram](img/wiring.jpg)
 
 ---
 
