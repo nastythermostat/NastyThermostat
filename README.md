@@ -159,8 +159,6 @@ The device hosts a REST API on port 80.
 
 ### GET /api — Status
 
-No token required (unless a token is configured).
-
 ```bash
 curl http://192.168.x.x/api
 ```
