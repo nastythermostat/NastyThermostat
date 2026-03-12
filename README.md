@@ -8,26 +8,6 @@ A Nest Gen2 thermostat that lost Google connectivity? NastyThermostat gives it a
 
 ---
 
-## Table of Contents
-
-- [How it works](#how-it-works)
-- [Features](#features)
-- [Parts list](#parts-list)
-- [Pin mapping](#pin-mapping)
-- [3D printed parts](#3d-printed-parts)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [MQTT topics](#mqtt-topics)
-- [HTTP API](#http-api)
-- [On-device menu](#on-device-menu)
-- [Display](#display)
-- [Calibration](#calibration)
-- [Serial commands](#serial-commands)
-- [Troubleshooting](#troubleshooting)
-- [License](#license)
-
----
-
 ## How it works
 
 ```
@@ -53,39 +33,18 @@ The ESP32-C6 reads a DS18B20 temperature sensor and receives setpoints via rotar
 
 ---
 
-## Parts list
+## Hardware
 
-> Full parts list also available as [Excel spreadsheet](docs/Part_List.xlsx)
+| Component | Description |
+|---|---|
+| ESP32-C6 | Waveshare ESP32-C6 LCD 1.47 (ST7789 display included) |
+| NEMA17 | Stepper motor |
+| DRV8825 | Stepper driver module |
+| DS18B20 | Temperature sensor |
+| HW-040 | Rotary encoder with button |
+| GT2 belt + pulleys | 20T motor pulley, 138T Nest pulley (3D printed) |
 
-| # | Category | Component | Description | Qty | ~Price |
-|---|---|---|---|---|---|
-| 1 | Electronics | ESP32-C6 LCD 1.47 | ESP32-C6 dev board with 1.47" ST7789 display | 1 | €15.89 |
-| 2 | Electronics | DRV8825 Stepper Driver | Microstepping driver module (heatsink included) | 1 | €1.69 |
-| 3 | Electronics | Stepper Driver Expansion Board | 4-channel driver carrier board | 1 | €1.01 |
-| 4 | Electronics | NEMA17 Stepper Motor | 1.8°, 17 Ncm, 1A, 23mm body | 1 | €9.76 |
-| 5 | Electronics | DS18B20 Temperature Sensor | Digital 1-Wire temperature module | 1 | €1.83 |
-| 6 | Electronics | KY-040 Rotary Encoder | 360° encoder with push button | 1 | €1.55 |
-| 7 | Mechanical | GT2 Belt 320mm | Closed loop 2GT-320-6mm belt | 1 | €1.89 |
-| 8 | Mechanical | GT2 Pulley 20T | 20 teeth, 5mm bore, on stepper motor | 1 | €1.00 |
-| 9 | Power | 12V 3A Power Adapter | 5.5x2.1mm DC output | 1 | €11.68 |
-| 10 | Power | DC-DC Buck Converter | 12V to 5V 5A step-down module | 1 | €1.89 |
-| 11 | Power | USB-C 90° Adapter | Powers the ESP32 | 1 | €2.25 |
-| 12 | Wiring | 12V Power Cable | 14cm red/black, adapter → driver | 1 | €1.00 |
-| 13 | Wiring | Dupont Jumper Wires | 10cm Female-to-Female pack | 1 | €1.50 |
-| 14 | Wiring | USB-C / Micro-USB Split Cable | 0.2m, powers Nest + ESP32 | 1 | €3.29 |
-| 15 | Wiring | Stepper Motor Cable | JST XH2.54mm female, 10-15cm | 1 | €1.00 |
-| 16 | Hardware | M3×8 Screws | Mounting | 8 | — |
-| 17 | Hardware | M3 Washers | Mounting | 6 | — |
-| 18 | Hardware | M2×8 Screws | Mounting | 2 | — |
-| 19 | 3D Print | GT2 Pulley 138T | Custom pulley for Nest thermostat | 1 | — |
-| 20 | 3D Print | Mounting Plate | Baseplate for electronics and Nest | 1 | — |
-| 21 | 3D Print | Stand | Stand for the mounting plate | 1 | — |
-
-**Total electronics + mechanical: ~€55**
-
----
-
-## Pin mapping
+### Pin mapping
 
 | Function | GPIO |
 |---|---|
@@ -103,9 +62,11 @@ The ESP32-C6 reads a DS18B20 temperature sensor and receives setpoints via rotar
 | Encoder Button | 4 |
 | DS18B20 | 9 |
 
+![Wiring diagram](img/wiring.jpg)
+
 ---
 
-## 3D printed parts
+## 3D Printed Parts
 
 STL files are in the `/3d-models/` folder. Print the Nest pulley (138T) and motor mount in PLA or PETG, 30% infill minimum. The pulley attaches directly to the Nest dial ring.
 
@@ -124,20 +85,12 @@ Or build yourself using PlatformIO:
 ```bash
 git clone https://github.com/nastythermostat/NastyThermostat.git
 cd NastyThermostat
+# Copy and edit secrets template
 cp include/SecretsTemplate.h include/arduino_secrets.h
+# Build & upload
 pio run --target upload
 ```
 
-### 2. Libraries (PlatformIO handles this automatically)
-
-- Adafruit GFX + ST7789
-- AccelStepper
-- PubSubClient
-- ArduinoJson
-- WiFiManager
-- OneWireNg
-
----
 
 ## Configuration
 
@@ -173,7 +126,7 @@ Or hold the encoder button for 5 seconds at boot.
 
 ---
 
-## MQTT topics
+## MQTT Topics
 
 Topics are based on the device name (configurable). Default: `NastyThermostatXXXXXX`
 
@@ -222,7 +175,8 @@ Response:
   "stepSize": 0.1,
   "motor_position": 14420,
   "steps_per_degree": 856.0,
-  "mqtt_enabled": true
+  "mqtt_enabled": true,
+  ...
 }
 ```
 
@@ -235,6 +189,8 @@ curl -X POST http://192.168.x.x/api \
   -H "Content-Type: application/json" \
   -d '{"token":"yourtoken","setpoint":21.0}'
 ```
+
+Available POST fields:
 
 | Field | Type | Description |
 |---|---|---|
