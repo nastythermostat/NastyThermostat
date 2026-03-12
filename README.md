@@ -4,7 +4,7 @@
 
 A Nest Gen2 thermostat that lost Google connectivity? NastyThermostat gives it a second life by physically turning the dial using a stepper motor, GT2 belt and 3D-printed gear — controlled by an ESP32-C6 with full MQTT, Domoticz and Home Assistant integration.
 
-![NastyThermostat hardware overview](docs/photo.jpg)
+![NastyThermostat hardware overview](img/photo.jpg)
 
 ---
 
