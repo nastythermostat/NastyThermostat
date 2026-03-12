@@ -8,6 +8,24 @@ A Nest Gen2 thermostat that lost Google connectivity? NastyThermostat gives it a
 
 ---
 
+## Table of Contents
+
+- [How it works](#how-it-works)
+- [Features](#features)
+- [Parts list](#parts-list)
+- [Pin mapping](#pin-mapping)
+- [3D printed parts](#3d-printed-parts)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [MQTT topics](#mqtt-topics)
+- [HTTP API](#http-api)
+- [On-device menu](#on-device-menu)
+- [Display](#display)
+- [Calibration](#calibration)
+- [Serial commands](#serial-commands)
+- [Troubleshooting](#troubleshooting)
+- [License](#license)
+
 ## How it works
 
 ```
