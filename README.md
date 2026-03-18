@@ -6,10 +6,10 @@ A Nest Gen2 thermostat that lost Google connectivity? NastyThermostat gives it a
 
 ![NastyThermostat hardware overview](img/photo.jpg)
 
-> [Build guide](https://nastythermostat.github.io/NastyThermostat/build/)
-> [3D-Models](https://nastythermostat.github.io/NastyThermostat/3d-Models/)
-> [Setup](https://nastythermostat.github.io/NastyThermostat/setup/)
-> [Webflash](https://nastythermostat.cc/webflash)
+- [Build guide](https://nastythermostat.github.io/NastyThermostat/build/)
+- [3D-Models](https://nastythermostat.github.io/NastyThermostat/3d-Models/)
+- [Setup](https://nastythermostat.github.io/NastyThermostat/setup/)
+- [Webflash](https://nastythermostat.cc/webflash)
 
 ---
 
