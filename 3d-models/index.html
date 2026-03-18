@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Models — NastyThermostat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #222;
+    --border: #2e2e2e;
+    --accent: #3b82f6;
+    --accent2: #60a5fa;
+    --text: #e5e5e5;
+    --muted: #888;
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  /* Topbar */
+  .topbar {
+    border-bottom: 1px solid var(--border);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: rgba(15,15,15,0.95);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+  }
+  .topbar-brand {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent2);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+  }
+  .topbar-brand span { color: var(--muted); }
+  .topbar-links { display: flex; gap: 24px; }
+  .topbar-links a {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    font-family: var(--mono);
+    transition: color 0.2s;
+  }
+  .topbar-links a:hover { color: var(--text); }
+
+  /* Page */
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 56px 40px 80px;
+  }
+
+  .page-header {
+    margin-bottom: 56px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-header .badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .page-header h1 {
+    font-family: var(--mono);
+    font-size: 32px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .page-header p {
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 520px;
+  }
+
+  /* Print info bar */
+  .print-info {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 56px;
+    padding: 20px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .print-info-item { display: flex; flex-direction: column; gap: 4px; }
+  .print-info-item .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .print-info-item .value {
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  /* Model card */
+  .model-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 32px;
+    transition: border-color 0.2s;
+  }
+  .model-card:hover { border-color: #444; }
+
+  .model-images {
+    display: grid;
+    gap: 1px;
+    background: var(--border);
+  }
+  .model-images.single { grid-template-columns: 1fr; }
+  .model-images.double { grid-template-columns: 1fr 1fr; }
+
+  .model-images img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: contain;
+    background: #fff;
+    display: block;
+  }
+
+  .model-body {
+    padding: 28px 32px;
+  }
+
+  .model-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .model-title {
+    font-family: var(--mono);
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+
+  .model-desc {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    max-width: 560px;
+    line-height: 1.7;
+  }
+
+  /* Download buttons */
+  .downloads {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .dl-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+
+  .dl-btn.stl {
+    background: rgba(59,130,246,0.1);
+    border-color: rgba(59,130,246,0.3);
+    color: var(--accent2);
+  }
+  .dl-btn.stl:hover {
+    background: rgba(59,130,246,0.2);
+    border-color: var(--accent);
+  }
+
+  .dl-btn.step {
+    background: rgba(34,197,94,0.08);
+    border-color: rgba(34,197,94,0.25);
+    color: #4ade80;
+  }
+  .dl-btn.step:hover {
+    background: rgba(34,197,94,0.15);
+    border-color: #22c55e;
+  }
+
+  .dl-btn.f3d {
+    background: rgba(251,146,60,0.08);
+    border-color: rgba(251,146,60,0.25);
+    color: #fb923c;
+  }
+  .dl-btn.f3d:hover {
+    background: rgba(251,146,60,0.15);
+    border-color: #f97316;
+  }
+
+  .dl-icon { font-size: 14px; }
+
+  /* Sub-parts */
+  .sub-parts {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .sub-parts-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .sub-part {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .sub-part:last-child { border-bottom: none; padding-bottom: 0; }
+  .sub-part-name {
+    font-size: 14px;
+    color: var(--text);
+  }
+  .sub-part-desc {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* Footer */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: var(--mono);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .footer a { color: var(--accent2); text-decoration: none; }
+
+  @media (max-width: 640px) {
+    .page { padding: 32px 20px 60px; }
+    .topbar { padding: 14px 20px; }
+    .topbar-links { gap: 16px; }
+    .model-images.double { grid-template-columns: 1fr; }
+    .model-body { padding: 20px; }
+    .footer { padding: 24px 20px; flex-direction: column; gap: 8px; text-align: center; }
+    .print-info { gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="https://nastythermostat.cc" class="topbar-brand">NastyThermostat<span>.cc</span></a>
+  <nav class="topbar-links">
+    <a href="https://nastythermostat.cc/build">Build guide</a>
+    <a href="https://nastythermostat.cc/webflash">Flash firmware</a>
+    <a href="https://github.com/nastythermostat/NastyThermostat">GitHub</a>
+  </nav>
+</header>
+
+<div class="page">
+
+  <div class="page-header">
+    <span class="badge">3D Models</span>
+    <h1>Print your own<br>NastyThermostat</h1>
+    <p>All parts are designed in Fusion 360 and available as STL, STEP and F3D. Print in PLA with standard settings.</p>
+  </div>
+
+  <div class="print-info">
+    <div class="print-info-item">
+      <span class="label">Material</span>
+      <span class="value">PLA</span>
+    </div>
+    <div class="print-info-item">
+      <span class="label">Infill</span>
+      <span class="value">20–30%</span>
+    </div>
+    <div class="print-info-item">
+      <span class="label">Layer height</span>
+      <span class="value">0.2mm</span>
+    </div>
+    <div class="print-info-item">
+      <span class="label">Supports</span>
+      <span class="value">Not required</span>
+    </div>
+    <div class="print-info-item">
+      <span class="label">Design tool</span>
+      <span class="value">Fusion 360</span>
+    </div>
+  </div>
+
+  <!-- GT2 Pulley 138T -->
+  <div class="model-card">
+    <div class="model-images single">
+      <img src="images/GT2 Pulley138.png" alt="GT2 Pulley 138T">
+    </div>
+    <div class="model-body">
+      <p class="model-label">Part 1 of 2</p>
+      <h2 class="model-title">GT2 Pulley 138T</h2>
+      <p class="model-desc">The large gear ring that fits around the Nest thermostat dial. Attaches to the metal Nest ring with double-sided tape at 3 points. The GT2 belt runs along the outer teeth to connect with the stepper motor pulley.</p>
+      <div class="downloads">
+        <a class="dl-btn stl" href="Files/GT2 Pulley138.stl" download>
+          <span class="dl-icon">⬇</span> STL
+        </a>
+        <a class="dl-btn step" href="Files/GT2 Pulley138.step" download>
+          <span class="dl-icon">⬇</span> STEP
+        </a>
+        <a class="dl-btn f3d" href="Files/GT2 Pulley138.f3d" download>
+          <span class="dl-icon">⬇</span> F3D (Fusion 360)
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nasty_Mounting -->
+  <div class="model-card">
+    <div class="model-images double">
+      <img src="images/Nasty_Mounting.png" alt="Mounting plate and stand — perspective view">
+      <img src="images/Nasty_Mounting_top.png" alt="Mounting plate and stand — top view">
+    </div>
+    <div class="model-body">
+      <p class="model-label">Part 2 of 2</p>
+      <h2 class="model-title">Mounting Plate &amp; Stand</h2>
+      <p class="model-desc">The main frame that holds the Nest thermostat, stepper motor, electronics and all components. The stand clips into the bottom of the mounting plate and keeps the assembly upright on a surface. Both parts are included in the Fusion 360 and STEP files; individual STL files are available below for direct slicing.</p>
+
+      <div class="downloads">
+        <a class="dl-btn step" href="Files/Nasty_Mounting.step" download>
+          <span class="dl-icon">⬇</span> STEP (complete)
+        </a>
+        <a class="dl-btn f3d" href="Files/Nasty_Mounting.f3d" download>
+          <span class="dl-icon">⬇</span> F3D (Fusion 360)
+        </a>
+      </div>
+
+      <div class="sub-parts">
+        <p class="sub-parts-label">Individual STL files</p>
+        <div class="sub-part">
+          <div>
+            <div class="sub-part-name">Mounting Plate</div>
+            <div class="sub-part-desc">Main baseplate — holds Nest, stepper motor, driver board and all electronics</div>
+          </div>
+          <a class="dl-btn stl" href="Files/Mounting Plate.stl" download>
+            <span class="dl-icon">⬇</span> STL
+          </a>
+        </div>
+        <div class="sub-part">
+          <div>
+            <div class="sub-part-name">Stand</div>
+            <div class="sub-part-desc">Clips into the bottom of the mounting plate to keep the assembly upright</div>
+          </div>
+          <a class="dl-btn stl" href="Files/Stand.stl" download>
+            <span class="dl-icon">⬇</span> STL
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <span>NastyThermostat — <a href="https://nastythermostat.cc">nastythermostat.cc</a></span>
+  <span><a href="https://nastythermostat.cc/build">Build guide</a> &nbsp;·&nbsp; <a href="https://nastythermostat.cc/webflash">Flash firmware</a> &nbsp;·&nbsp; <a href="https://github.com/nastythermostat/NastyThermostat">GitHub</a></span>
+</footer>
+
+</body>
+</html>
