@@ -294,16 +294,13 @@ Connect via Serial Monitor at 115200 baud:
 → Adjust Steps/degree in menu or via API. Start with small increments.
 
 **WiFi not connecting**
-→ Hold encoder button 5 seconds at boot to force portal mode.
+→ Check Serial Monitor output at 115200 baud. Verify status.
 
 **MQTT not connecting**
 → Check Serial Monitor output at 115200 baud. Verify broker IP and port in portal.
 
 **DS18B20 reads 0°C or wrong temperature**
 → Check wiring on GPIO9. Use temperature offset in menu to correct.
-
-**Homing misses the mechanical stop**
-→ A 15-second safety timeout will stop the motor automatically.
 
 ---
 
