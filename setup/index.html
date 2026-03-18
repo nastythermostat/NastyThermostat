@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Firmware &amp; Setup — NastyThermostat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #222;
+    --border: #2e2e2e;
+    --accent: #3b82f6;
+    --accent2: #60a5fa;
+    --warn: #f59e0b;
+    --text: #e5e5e5;
+    --muted: #888;
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  /* Topbar */
+  .topbar {
+    border-bottom: 1px solid var(--border);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: rgba(15,15,15,0.95);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+  }
+  .topbar-brand { font-family: var(--mono); font-size: 14px; color: var(--accent2); text-decoration: none; letter-spacing: 0.05em; }
+  .topbar-brand span { color: var(--muted); }
+  .topbar-links { display: flex; gap: 24px; }
+  .topbar-links a { font-size: 13px; color: var(--muted); text-decoration: none; font-family: var(--mono); transition: color 0.2s; }
+  .topbar-links a:hover { color: var(--text); }
+
+  /* Layout */
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    max-width: 1100px;
+    margin: 0 auto;
+    min-height: calc(100vh - 53px);
+  }
+
+  /* Sidebar */
+  .sidebar {
+    border-right: 1px solid var(--border);
+    padding: 40px 24px;
+    position: sticky;
+    top: 53px;
+    height: calc(100vh - 53px);
+    overflow-y: auto;
+  }
+  .sidebar-label { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 16px; }
+  .sidebar nav { display: flex; flex-direction: column; gap: 2px; }
+  .sidebar nav a { font-size: 13px; color: var(--muted); text-decoration: none; padding: 6px 10px; border-radius: 4px; transition: all 0.15s; display: flex; align-items: center; gap: 8px; }
+  .sidebar nav a:hover { color: var(--text); background: var(--surface); }
+  .sidebar nav a.active { color: var(--accent2); background: rgba(59,130,246,0.1); }
+  .sidebar nav a .num { font-family: var(--mono); font-size: 10px; color: var(--border); min-width: 16px; }
+  .sidebar-section { font-family: var(--mono); font-size: 10px; color: var(--border); letter-spacing: 0.1em; text-transform: uppercase; padding: 14px 10px 4px; }
+
+  /* Main */
+  .main { padding: 48px 56px; max-width: 800px; }
+
+  /* Page header */
+  .page-header { margin-bottom: 56px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+  .page-header .badge { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; display: block; }
+  .page-header h1 { font-family: var(--mono); font-size: 32px; font-weight: 700; color: #fff; line-height: 1.2; margin-bottom: 12px; }
+  .page-header p { color: var(--muted); font-size: 15px; max-width: 480px; }
+
+  /* Section */
+  .section { margin-bottom: 64px; scroll-margin-top: 80px; }
+  .section-heading { font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+  .section-heading::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .section h2 { font-family: var(--mono); font-size: 18px; color: #fff; margin-bottom: 12px; }
+
+  /* Step */
+  .step { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin-bottom: 16px; }
+  .step-num { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.1em; margin-bottom: 8px; display: block; }
+  .step h3 { font-size: 15px; font-weight: 500; color: #fff; margin-bottom: 10px; }
+  .step p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+  .step img { width: 100%; border-radius: 6px; margin-top: 16px; border: 1px solid var(--border); display: block; }
+
+  /* Notes */
+  .note { display: flex; gap: 12px; padding: 14px 16px; border-radius: 6px; font-size: 13px; margin: 12px 0; align-items: flex-start; }
+  .note.tip { background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.2); color: var(--accent2); }
+  .note.warn { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25); color: #fbbf24; }
+  .note.danger { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); color: #f87171; }
+  .note-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+
+  /* Setting block */
+  .setting { border-left: 2px solid var(--border); padding: 16px 20px; margin: 16px 0; }
+  .setting:hover { border-left-color: var(--accent); }
+  .setting-name { font-family: var(--mono); font-size: 14px; color: #fff; font-weight: 700; margin-bottom: 4px; }
+  .setting-default { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .setting-default code { font-family: var(--mono); color: var(--accent2); background: rgba(59,130,246,0.1); padding: 1px 6px; border-radius: 3px; font-size: 11px; }
+  .setting-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
+  .setting-options { margin-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+  .setting-option { font-size: 13px; color: var(--muted); display: flex; gap: 8px; align-items: baseline; }
+  .setting-option code { font-family: var(--mono); color: var(--accent2); background: rgba(59,130,246,0.1); padding: 1px 6px; border-radius: 3px; font-size: 11px; white-space: nowrap; }
+
+  /* URL display */
+  .url-block { font-family: var(--mono); font-size: 13px; color: var(--accent2); background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; margin: 12px 0; display: block; text-decoration: none; }
+  .url-block:hover { border-color: var(--accent); }
+
+  /* Section image */
+  .section-img { width: 100%; border-radius: 8px; border: 1px solid var(--border); margin: 16px 0; display: block; }
+  .section-img.narrow { max-width: 420px; }
+
+  /* Footer */
+  .footer { border-top: 1px solid var(--border); padding: 32px 56px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); font-family: var(--mono); }
+  .footer a { color: var(--accent2); text-decoration: none; }
+
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main { padding: 32px 24px; }
+    .topbar { padding: 14px 20px; }
+    .topbar-links { gap: 16px; }
+    .footer { padding: 24px; flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="https://nastythermostat.cc" class="topbar-brand">NastyThermostat<span>.cc</span></a>
+  <nav class="topbar-links">
+    <a href="https://nastythermostat.cc/build">Build guide</a>
+    <a href="https://nastythermostat.cc/webflash">Flash firmware</a>
+    <a href="https://nastythermostat.cc/3d-models">3D models</a>
+    <a href="https://github.com/nastythermostat/NastyThermostat">GitHub</a>
+  </nav>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <p class="sidebar-label">On this page</p>
+    <nav>
+      <p class="sidebar-section">Part 1 — Firmware</p>
+      <a href="#step1"><span class="num">01</span>Open webflasher</a>
+      <a href="#step2"><span class="num">02</span>Select device</a>
+      <a href="#step3"><span class="num">03</span>Confirm install</a>
+      <a href="#step4"><span class="num">04</span>Wait</a>
+      <a href="#step5"><span class="num">05</span>Complete</a>
+      <a href="#step6"><span class="num">06</span>Check logs</a>
+      <p class="sidebar-section">Part 2 — WiFi</p>
+      <a href="#step7"><span class="num">07</span>Connect to AP</a>
+      <a href="#step8"><span class="num">08</span>Open portal</a>
+      <p class="sidebar-section">Part 3 — Settings</p>
+      <a href="#step9"><span class="num">09</span>WiFi &amp; MQTT</a>
+      <a href="#step11"><span class="num">11</span>Save</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+
+    <div class="page-header">
+      <span class="badge">Setup Guide</span>
+      <h1>Firmware &amp;<br>Configuration</h1>
+      <p>Install the firmware via the webflasher and configure WiFi, MQTT and all other settings.</p>
+    </div>
+
+    <div class="note tip">
+      <span class="note-icon">💡</span>
+      <span><strong>Required browser:</strong> Google Chrome or Microsoft Edge. Firefox and Safari do not support the Web Serial API.</span>
+    </div>
+
+    <!-- PART 1 -->
+    <section class="section" id="part1">
+      <p class="section-heading">Part 1 — Installing the Firmware</p>
+    </section>
+
+    <section class="section" id="step1" style="margin-top:-40px;">
+      <div class="step">
+        <span class="step-num">STEP 01</span>
+        <h3>Open the webflasher</h3>
+        <p>Connect the NastyThermostat to your computer via USB. Then open Chrome or Edge and go to:</p>
+        <a class="url-block" href="https://nastythermostat.cc/webflash">https://nastythermostat.cc/webflash</a>
+        <p>Click the <strong style="color:#fff;">Connect</strong> button.</p>
+        <img src="images/image1.jpeg" alt="Webflasher — Connect button">
+      </div>
+    </section>
+
+    <section class="section" id="step2">
+      <div class="step">
+        <span class="step-num">STEP 02</span>
+        <h3>Select the device</h3>
+        <p>A pop-up appears with available serial ports. Select the port of the ESP32-C6 (usually <strong style="color:#fff;">"USB Serial"</strong> or <strong style="color:#fff;">"CP210x"</strong>) and click Connect.</p>
+      </div>
+    </section>
+
+    <section class="section" id="step3">
+      <div class="step">
+        <span class="step-num">STEP 03</span>
+        <h3>Confirm the installation</h3>
+        <p>The webflasher automatically detects the device and shows a confirmation dialog: <em>"Confirm Installation — Do you want to install NastyThermostat Firmware v1.0.0?"</em>. Click <strong style="color:#fff;">Install</strong>.</p>
+        <img src="images/image2.jpeg" alt="Confirm Installation dialog">
+      </div>
+    </section>
+
+    <section class="section" id="step4">
+      <div class="step">
+        <span class="step-num">STEP 04</span>
+        <h3>Wait for the installation</h3>
+        <p>The firmware is now being written to the device. This takes approximately 1–2 minutes. Keep the browser page visible — this prevents slowdown.</p>
+        <img src="images/image3.jpeg" alt="Installing firmware">
+        <div class="note danger" style="margin-top:12px;">
+          <span class="note-icon">⚠</span>
+          <span>Do not disconnect the USB during installation.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="step5">
+      <div class="step">
+        <span class="step-num">STEP 05</span>
+        <h3>Installation complete</h3>
+        <p>Afterwards the menu appears with two options: <em>"Install NastyThermostat Firmware"</em> and <em>"Logs &amp; Console"</em>. Click <strong style="color:#fff;">Logs &amp; Console</strong> to verify the device booted correctly.</p>
+        <img src="images/image4.jpeg" alt="Post-install menu">
+      </div>
+    </section>
+
+    <section class="section" id="step6">
+      <div class="step">
+        <span class="step-num">STEP 06</span>
+        <h3>Check the logs</h3>
+        <p>The logs show the boot messages of the ESP32. At the bottom <em>"Starting Web Portal"</em> appears — this means the NastyThermostat has created its own WiFi network for configuration.</p>
+        <img src="images/image5.jpeg" alt="Boot logs — Starting Web Portal">
+      </div>
+    </section>
+
+    <!-- PART 2 -->
+    <section class="section" id="part2">
+      <p class="section-heading">Part 2 — Configuring WiFi</p>
+    </section>
+
+    <section class="section" id="step7" style="margin-top:-40px;">
+      <div class="step">
+        <span class="step-num">STEP 07</span>
+        <h3>Connect to the NastyThermostat network</h3>
+        <p>Open the WiFi settings on your computer or phone. You will see a network appear named <strong style="color:#fff;">"NastyThermostatE08898"</strong> (the last digits are the MAC address of your device). Click Connect.</p>
+        <img src="images/image6.jpeg" alt="WiFi network appearing">
+        <div class="note tip" style="margin-top:12px;">
+          <span class="note-icon">💡</span>
+          <span>The network has no password and no internet access — this is normal.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="step8">
+      <div class="step">
+        <span class="step-num">STEP 08</span>
+        <h3>Open the configuration portal</h3>
+        <p>Windows automatically shows a notification <em>"Action required, no internet"</em> with the button <em>"Open browser and connect"</em>. Click this, or navigate manually to <strong style="color:#fff;">192.168.4.1</strong> in your browser.</p>
+        <p style="margin-top:8px;">You now see the WiFiManager portal of the NastyThermostat. Click <strong style="color:#fff;">Configure WiFi</strong> to continue.</p>
+        <img src="images/image7.jpeg" alt="WiFiManager portal">
+      </div>
+    </section>
+
+    <!-- PART 3 -->
+    <section class="section" id="part3">
+      <p class="section-heading">Part 3 — Configuring Settings</p>
+    </section>
+
+    <section class="section" id="step9" style="margin-top:-40px;">
+      <div class="step">
+        <span class="step-num">STEP 09</span>
+        <h3>WiFi and basic MQTT settings</h3>
+        <p>The configuration page shows a list of available WiFi networks at the top. Below is a description of all fields:</p>
+        <img src="images/image8.png" alt="Configuration page">
+      </div>
+
+      <div class="setting">
+        <div class="setting-name">SSID / Password</div>
+        <div class="setting-desc">Select your WiFi network from the list and enter the password. The NastyThermostat will connect to it after saving.</div>
+      </div>
+
+      <div class="setting">
+        <div class="setting-name">Device name</div>
+        <div class="setting-default">Default: <code>NastyThermostatXXXXXX</code></div>
+        <div class="setting-desc">The name of the device. XXXXXX represents the last 6 characters of the MAC address. Used as the base for MQTT topics (e.g. <code style="font-family:var(--mono);font-size:12px;color:var(--accent2);">NastyThermostatE08898/out/temp</code>) and as the hostname on the network. When using multiple thermostats, each must have a unique name.</div>
+      </div>
+
+      <div class="setting">
+        <div class="setting-name">MQTT server</div>
+        <div class="setting-default">Default: <code>Empty = MQTT disabled</code></div>
+        <div class="setting-desc">IP address or hostname of your MQTT broker (e.g. <code style="font-family:var(--mono);font-size:12px;color:var(--accent2);">192.168.1.141</code>). If this field is empty, no MQTT connection is made and Domoticz and Home Assistant will also not be active.</div>
+      </div>
+
+      <div class="setting">
+        <div class="setting-name">MQTT port</div>
+        <div class="setting-default">Default: <code>1883</code></div>
+        <div class="setting-desc">Port number of the MQTT broker. Usually 1883 (unencrypted). Only change this if your broker runs on a non-standard port.</div>
+      </div>
+
+      <div class="setting">
+        <div class="setting-name">Domoticz IDX temperature</div>
+        <div class="setting-default">Default: <code>Empty = Domoticz disabled</code></div>
+        <div class="setting-desc">The IDX number of the temperature virtual device in Domoticz. The measured temperature is published to this IDX. Both this and the IDX setpoint must be filled in to activate Domoticz integration.</div>
+      </div>
+
+      <div class="setting">
+        <div class="setting-name">Domoticz IDX setpoint</div>
+        <div class="setting-default">Default: <code>Empty = Domoticz disabled</code></div>
+        <div class="setting-desc">The IDX number of the setpoint virtual device in Domoticz (type Thermostat Setpoint). The NastyThermostat listens on this IDX for setpoint changes from Domoticz, and publishes the current setpoint back.</div>
+      </div>
+
+      <div class="setting">
+        <div class="setting-name">Domoticz gateway OUT mode</div>
+        <div class="setting-default">Default: <code>index</code></div>
+        <div class="setting-desc">Determines the format used when the NastyThermostat publishes to Domoticz.</div>
+        <div class="setting-options">
+          <div class="setting-option"><code>index</code><span>standard Domoticz JSON format with idx, nvalue, svalue (recommended)</span></div>
+          <div class="setting-option"><code>flat</code><span>simplified format, only for special Domoticz configurations</span></div>
+        </div>
+      </div>
+
+      <div class="setting">
+        <div class="setting-name">Homing after receiving setpoint</div>
+        <div class="setting-default">Default: <code>on</code></div>
+        <div class="setting-desc">Determines what happens when a new setpoint is received via MQTT, API or Domoticz.</div>
+        <div class="setting-options">
+          <div class="setting-option"><code>on</code><span>the motor first returns to the zero position (homing) for maximum accuracy, then moves to the new setpoint</span></div>
+          <div class="setting-option"><code>off</code><span>the motor moves directly to the new setpoint with a short "wake-jiggle" to activate the Nest thermostat (faster, slightly less accurate)</span></div>
+        </div>
+      </div>
+
+      <div class="setting">
+        <div class="setting-name">Home Assistant MQTT Discovery</div>
+        <div class="setting-default">Default: <code>on</code></div>
+        <div class="setting-desc">Determines whether the NastyThermostat automatically sends an MQTT Discovery message.</div>
+        <div class="setting-options">
+          <div class="setting-option"><code>on</code><span>Home Assistant automatically recognises the device as a climate entity (temperature + setpoint visible in HA without manual configuration)</span></div>
+          <div class="setting-option"><code>off</code><span>no automatic HA integration</span></div>
+        </div>
+      </div>
+
+      <div class="setting">
+        <div class="setting-name">HTTP API token</div>
+        <div class="setting-default">Default: <code>Empty = current token unchanged</code></div>
+        <div class="setting-desc">Security token for the HTTP API (POST requests). Without a token, only GET requests are possible (read-only). Enter a password of your choice to secure write access. Type <code style="font-family:var(--mono);font-size:12px;color:var(--accent2);">clear</code> to remove the token and block write access.</div>
+      </div>
+
+      <div class="setting">
+        <div class="setting-name">MQTT publish interval</div>
+        <div class="setting-default">Default: <code>30</code> seconds</div>
+        <div class="setting-desc">How often the NastyThermostat publishes the temperature and setpoint to MQTT. Minimum 1 second. Lower values result in more network traffic and slightly higher power consumption.</div>
+      </div>
+    </section>
+
+    <section class="section" id="step11">
+      <div class="step">
+        <span class="step-num">STEP 11</span>
+        <h3>Save</h3>
+        <p>Click the <strong style="color:#fff;">Save</strong> button. The NastyThermostat saves the settings and attempts to connect to your WiFi network.</p>
+        <img src="images/image9.jpeg" alt="Credentials saved">
+        <p style="margin-top:12px;">Your computer disconnects from the NastyThermostat network and the NastyThermostat automatically connects to your own WiFi. The NastyThermostat is now ready to use.</p>
+        <div class="note tip" style="margin-top:12px;">
+          <span class="note-icon">💡</span>
+          <span>If the connection fails, the NastyThermostat network reappears and you can re-enter the settings.</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="footer">
+  <span>NastyThermostat — <a href="https://nastythermostat.cc">nastythermostat.cc</a></span>
+  <span><a href="https://nastythermostat.cc/build">Build guide</a> &nbsp;·&nbsp; <a href="https://nastythermostat.cc/webflash">Flash firmware</a> &nbsp;·&nbsp; <a href="https://github.com/nastythermostat/NastyThermostat">GitHub</a></span>
+</footer>
+
+<script>
+  const sections = document.querySelectorAll('.section[id]');
+  const links = document.querySelectorAll('.sidebar nav a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.sidebar nav a[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
