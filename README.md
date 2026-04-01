@@ -6,6 +6,8 @@ A Nest Gen2 thermostat that lost Google connectivity? NastyThermostat gives it a
 
 ![NastyThermostat hardware overview](img/photo.jpg)
 
+▶️ **[Watch the video](https://youtu.be/sp1l5ZTAiks)**
+
 ---
 
 ## How it works
@@ -26,7 +28,7 @@ The ESP32-C6 reads a DS18B20 temperature sensor and receives setpoints via rotar
 | **Print the 3D parts** | [→ 3D models](https://nastythermostat.cc/3d-models) |
 | **Flash the firmware** | [→ Webflash (browser, no software needed)](https://nastythermostat.cc/webflash) |
 | **Configure WiFi, MQTT & settings** | [→ Setup guide](https://nastythermostat.cc/setup) |
-| **See it in action** | [→ YouTube video](https://nastythermostat.cc/video) |
+| **See it in action** | [→ YouTube video](https://youtu.be/sp1l5ZTAiks) |
 
 ---
 
