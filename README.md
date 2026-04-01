@@ -47,7 +47,7 @@ The ESP32-C6 reads a DS18B20 temperature sensor and receives setpoints via rotar
 
 ## Parts list
 
-**[→ Download full parts list with supplier links (Excel)](https://github.com/nastythermostat/NastyThermostat/blob/main/docs/Part_List.xlsx?raw=true)**  
+**[→ Download full parts list with supplier links (Excel)](https://github.com/nastythermostat/NastyThermostat/raw/main/docs/Part_List.xlsx)**  
 **[→ Build guide — wiring and assembly details](https://nastythermostat.cc/build)**
 
 | # | Component | Qty | ~Price |
