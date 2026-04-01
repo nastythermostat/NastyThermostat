@@ -8,14 +8,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0f0f0f;
-    --surface: #1a1a1a;
-    --surface2: #222;
-    --border: #2e2e2e;
-    --accent: #3b82f6;
-    --accent2: #60a5fa;
-    --text: #e5e5e5;
-    --muted: #888;
+    --bg: #ffffff;
+    --surface: #f6f8fa;
+    --surface2: #eef1f4;
+    --border: #d0d7de;
+    --accent: #0969da;
+    --accent2: #0550ae;
+    --text: #0d1117;
+    --muted: #57606a;
     --mono: 'Space Mono', monospace;
     --sans: 'DM Sans', sans-serif;
   }
@@ -39,7 +39,7 @@
     justify-content: space-between;
     position: sticky;
     top: 0;
-    background: rgba(15,15,15,0.95);
+    background: rgba(246,248,250,0.97);
     backdrop-filter: blur(8px);
     z-index: 100;
   }
@@ -83,10 +83,10 @@
     display: block;
   }
   .page-header h1 {
-    font-family: var(--mono);
+    font-family: var(--sans);
     font-size: 32px;
-    font-weight: 700;
-    color: #fff;
+    font-weight: 500;
+    color: #0d1117;
     line-height: 1.2;
     margin-bottom: 12px;
   }
@@ -161,9 +161,10 @@
   }
 
   .model-title {
-    font-family: var(--mono);
+    font-family: var(--sans);
     font-size: 20px;
-    color: #fff;
+    font-weight: 500;
+    color: #0d1117;
     margin-bottom: 10px;
   }
 
@@ -197,33 +198,33 @@
   }
 
   .dl-btn.stl {
-    background: rgba(59,130,246,0.1);
+    background: rgba(9,105,218,0.08);
     border-color: rgba(59,130,246,0.3);
     color: var(--accent2);
   }
   .dl-btn.stl:hover {
-    background: rgba(59,130,246,0.2);
+    background: rgba(9,105,218,0.12);
     border-color: var(--accent);
   }
 
   .dl-btn.step {
-    background: rgba(34,197,94,0.08);
-    border-color: rgba(34,197,94,0.25);
-    color: #4ade80;
+    background: #dafbe1;
+    border-color: #56d364;
+    color: #1a7f37;
   }
   .dl-btn.step:hover {
-    background: rgba(34,197,94,0.15);
-    border-color: #22c55e;
+    background: #befacd;
+    border-color: #1a7f37;
   }
 
   .dl-btn.f3d {
-    background: rgba(251,146,60,0.08);
-    border-color: rgba(251,146,60,0.25);
-    color: #fb923c;
+    background: #fff1e5;
+    border-color: #f0883e;
+    color: #bc4c00;
   }
   .dl-btn.f3d:hover {
-    background: rgba(251,146,60,0.15);
-    border-color: #f97316;
+    background: #ffddb0;
+    border-color: #bc4c00;
   }
 
   .dl-icon { font-size: 14px; }
