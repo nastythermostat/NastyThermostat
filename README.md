@@ -97,7 +97,9 @@ The ESP32-C6 reads a DS18B20 temperature sensor and receives setpoints via rotar
 
 ## 3D printed parts
 
-**[→ 3D models page with previews and download](https://nastythermostat.cc/3d-models)**
+**[→ 3D models page with previews and download](https://nastythermostat.cc/3d-models)**  
+**[→ Printables](https://www.printables.com/model/1659567-nastythermostat-3d-printed-parts-for-nest-gen2-ste)**  
+**[→ Thingiverse](https://www.thingiverse.com/thing:7327205)**
 
 STL files are in the [`/3d-models/`](3d-models/) folder. Print in PLA or PETG, 30% infill minimum.
 
