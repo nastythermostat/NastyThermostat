@@ -1,35 +1,10 @@
 # NastyThermostat
 
-**Mechanically control a Nest Gen2 thermostat locally — no cloud, no API, full automation.**
+**Mechanically control a Nest Gen2 thermostat — fully local, no cloud, no API.**
 
-A Nest Gen2 thermostat that lost Google connectivity? NastyThermostat gives it a second life by physically turning the dial using a stepper motor, GT2 belt and 3D-printed gear — controlled by an ESP32-C6 with full MQTT, Domoticz and Home Assistant integration.
+A Nest Gen2 thermostat that lost Google connectivity? NastyThermostat gives it a second life by physically rotating the dial using a stepper motor and GT2 belt — controlled by an ESP32-C6 with MQTT, Domoticz, and Home Assistant integration.
 
 ![NastyThermostat hardware overview](img/photo.jpg)
-
----
-## Instructions
-- [Build guide](https://nastythermostat.github.io/NastyThermostat/build/)
-- [3D-Models](https://nastythermostat.github.io/NastyThermostat/3d-Models/)
-- [Setup](https://nastythermostat.github.io/NastyThermostat/setup/)
-- [Webflash](https://nastythermostat.cc/webflash/)
-
-## Table of Contents
-
-- [How it works](#how-it-works)
-- [Features](#features)
-- [Parts list](#parts-list)
-- [Pin mapping](#pin-mapping)
-- [3D printed parts](#3d-printed-parts)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [MQTT topics](#mqtt-topics)
-- [HTTP API](#http-api)
-- [On-device menu](#on-device-menu)
-- [Display](#display)
-- [Calibration](#calibration)
-- [Serial commands](#serial-commands)
-- [Troubleshooting](#troubleshooting)
-- [License](#license)
 
 ---
 
@@ -39,60 +14,64 @@ A Nest Gen2 thermostat that lost Google connectivity? NastyThermostat gives it a
 ESP32-C6  →  DRV8825 driver  →  NEMA17 stepper  →  GT2 belt  →  Nest dial
 ```
 
-The ESP32-C6 reads a DS18B20 temperature sensor and receives setpoints via rotary encoder, MQTT or HTTP API. It then calculates how many steps to move and physically rotates the Nest dial to the target temperature.
+The ESP32-C6 reads a DS18B20 temperature sensor and receives setpoints via rotary encoder, MQTT, or HTTP API. It calculates how many steps to move and physically rotates the Nest dial to the target temperature.
+
+---
+
+## Quick start
+
+| Step | Guide |
+|---|---|
+| **Assemble the hardware** | [→ Build guide](https://nastythermostat.cc/build) |
+| **Print the 3D parts** | [→ 3D models](https://nastythermostat.cc/3d-models) |
+| **Flash the firmware** | [→ Webflash (browser, no software needed)](https://nastythermostat.cc/webflash) |
+| **Configure WiFi, MQTT & settings** | [→ Setup guide](https://nastythermostat.cc/setup) |
+| **See it in action** | [→ YouTube video](https://nastythermostat.cc/video) |
 
 ---
 
 ## Features
 
-- 🌡️ DS18B20 local temperature sensor
-- 🎛️ Rotary encoder for manual control
-- 📺 ST7789 TFT display (1.47")
-- 📡 MQTT publish/subscribe (temperature + setpoint)
-- 🏠 Domoticz integration (IDX based)
-- 🤖 Home Assistant MQTT Discovery (climate entity)
-- 🌐 HTTP REST API
-- 🔧 WiFiManager configuration portal
-- 💾 Persistent settings (ESP32 Preferences)
-- ⚡ Stepper power management (auto-disable when idle)
+- DS18B20 local temperature sensor
+- Rotary encoder for manual control
+- ST7789 TFT display (1.47")
+- MQTT publish/subscribe (temperature + setpoint)
+- Domoticz integration (IDX based)
+- Home Assistant MQTT Discovery (automatic `climate` entity)
+- HTTP REST API
+- WiFiManager configuration portal (no code changes needed)
+- Persistent settings (ESP32 Preferences)
+- Stepper power management (auto-disable when idle)
 
 ---
 
 ## Parts list
 
-> Full parts list also available as [Excel spreadsheet](docs/Part_List.xlsx)
+**[→ Download full parts list with supplier links (Excel)](https://github.com/nastythermostat/NastyThermostat/blob/main/docs/Part_List.xlsx?raw=true)**  
+**[→ Build guide — wiring and assembly details](https://nastythermostat.cc/build)**
 
-| # | Category | Component | Description | Qty | ~Price |
-|---|---|---|---|---|---|
-| 1 | Electronics | ESP32-C6 LCD 1.47 | ESP32-C6 dev board with 1.47" ST7789 display | 1 | €15.89 |
-| 2 | Electronics | DRV8825 Stepper Driver | Microstepping driver module (heatsink included) | 1 | €1.69 |
-| 3 | Electronics | Stepper Driver Expansion Board | 4-channel driver carrier board | 1 | €1.01 |
-| 4 | Electronics | NEMA17 Stepper Motor | 1.8°, 17 Ncm, 1A, 23mm body | 1 | €9.76 |
-| 5 | Electronics | DS18B20 Temperature Sensor | Digital 1-Wire temperature module | 1 | €1.83 |
-| 6 | Electronics | KY-040 Rotary Encoder | 360° encoder with push button | 1 | €1.55 |
-| 7 | Mechanical | GT2 Belt 320mm | Closed loop 2GT-320-6mm belt | 1 | €1.89 |
-| 8 | Mechanical | GT2 Pulley 20T | 20 teeth, 5mm bore, on stepper motor | 1 | €1.00 |
-| 9 | Power | 12V 3A Power Adapter | 5.5x2.1mm DC output | 1 | €11.68 |
-| 10 | Power | DC-DC Buck Converter | 12V to 5V 5A step-down module | 1 | €1.89 |
-| 11 | Power | USB-C 90° Adapter | Powers the ESP32 | 1 | €2.25 |
-| 12 | Wiring | 12V Power Cable | 14cm red/black, adapter → driver | 1 | €1.00 |
-| 13 | Wiring | Dupont Jumper Wires | 10cm Female-to-Female pack | 1 | €1.50 |
-| 14 | Wiring | USB-C / Micro-USB Split Cable | 0.2m, powers Nest + ESP32 | 1 | €3.29 |
-| 15 | Wiring | Stepper Motor Cable | JST XH2.54mm female, 10-15cm | 1 | €1.00 |
-| 16 | Hardware | M3×8 Screws | Mounting | 8 | — |
-| 17 | Hardware | M3 Washers | Mounting | 6 | — |
-| 18 | Hardware | M2×8 Screws | Mounting | 2 | — |
-| 19 | 3D Print | GT2 Pulley 138T | Custom pulley for Nest thermostat | 1 | — |
-| 20 | 3D Print | Mounting Plate | Baseplate for electronics and Nest | 1 | — |
-| 21 | 3D Print | Stand | Stand for the mounting plate | 1 | — |
+| # | Component | Qty | ~Price |
+|---|---|---|---|
+| 1 | ESP32-C6 dev board with 1.47" ST7789 display | 1 | €15.89 |
+| 2 | DRV8825 stepper driver module | 1 | €1.69 |
+| 3 | Stepper driver expansion board (4-channel) | 1 | €1.01 |
+| 4 | NEMA17 stepper motor (1.8°, 17 Ncm, 1A, 23mm) | 1 | €9.76 |
+| 5 | DS18B20 temperature sensor module | 1 | €1.83 |
+| 6 | KY-040 rotary encoder | 1 | €1.55 |
+| 7 | GT2 closed loop belt 320mm | 1 | €1.89 |
+| 8 | GT2 pulley 20T, 5mm bore | 1 | €1.00 |
+| 9 | 12V 3A power adapter (5.5×2.1mm) | 1 | €11.68 |
+| 10 | DC-DC buck converter 12V → 5V 5A | 1 | €1.89 |
+| 11 | USB-C 90° adapter | 1 | €2.25 |
+| 12–15 | Cables (power, Dupont, stepper, USB-C/Micro-USB) | — | €6.79 |
+| 16–18 | M3×8 screws, M3 washers, M2×8 screws | — | — |
+| 19–21 | 3D printed: Nest pulley (138T), mounting plate, stand | — | — |
 
 **Total electronics + mechanical: ~€55**
 
 ---
 
 ## Pin mapping
-
-
 
 | Function | GPIO |
 |---|---|
@@ -109,25 +88,32 @@ The ESP32-C6 reads a DS18B20 temperature sensor and receives setpoints via rotar
 | Encoder DT | 1 |
 | Encoder Button | 4 |
 | DS18B20 | 9 |
-![Wiring diagram](img/wiring.jpg)
----
 
+![Wiring diagram](img/wiring.jpg)
+
+---
 
 ## 3D printed parts
 
-STL files are in the `/3d-models/` folder. Print the Nest pulley (138T) and motor mount in PLA or PETG, 30% infill minimum. The pulley attaches directly to the Nest dial ring.
+**[→ 3D models page with previews and download](https://nastythermostat.cc/3d-models)**
+
+STL files are in the [`/3d-models/`](3d-models/) folder. Print in PLA or PETG, 30% infill minimum.
+
+| Part | Description |
+|---|---|
+| Nest pulley 138T | Attaches directly to the Nest dial ring |
+| Motor mount | Mounts the NEMA17 to the base plate |
+| Mounting plate | Base for all electronics and the Nest |
+| Stand | Tilts the plate to the right angle |
 
 ---
 
-## Installation
+## Flashing the firmware
 
-### 1. Flash the firmware
+**[→ Flash NastyThermostat via browser (no software needed)](https://nastythermostat.cc/webflash)**  
+**[→ Full setup instructions](https://nastythermostat.cc/setup)**
 
-The easiest way is via the web flasher — no software needed:
-
-👉 **[Flash NastyThermostat via browser](https://nastythermostat.github.io/NastyThermostat/webflash/)**
-
-Or build yourself using PlatformIO:
+The easiest way is via the browser — no software needed. Or build and upload with PlatformIO:
 
 ```bash
 git clone https://github.com/nastythermostat/NastyThermostat.git
@@ -145,49 +131,45 @@ pio run --target upload
 On first boot (or when WiFi is not found), the device creates an access point:
 
 ```
-SSID: NastyThermostat (or NastyThermostatXXXXXX with unique MAC suffix)
-URL:  http://192.168.4.1
+SSID:  NastyThermostatXXXXXX
+URL:   http://192.168.4.1
 ```
 
-Connect to this AP and open the portal. All settings are configured here:
+Connect to this AP and open the portal to configure all settings.
 
 | Setting | Description |
 |---|---|
-| **Device name** | Unique name used for MQTT topics and AP SSID. Default: `NastyThermostatXXXXXX` |
-| **MQTT server** | IP or hostname of your MQTT broker. Leave empty to disable MQTT. |
+| **Device name** | Used for MQTT topics and AP SSID. Default: `NastyThermostatXXXXXX` |
+| **MQTT server** | IP or hostname of your broker. Leave empty to disable MQTT. |
 | **MQTT port** | Default: `1883` |
-| **Domoticz IDX temperature** | Domoticz virtual sensor IDX for temperature. Leave `0` to disable. |
-| **Domoticz IDX setpoint** | Domoticz virtual sensor IDX for setpoint. Leave `0` to disable. |
-| **Domoticz gateway OUT mode** | `index` (default) = subscribe to `domoticz/out/{idx}`. `flat` = subscribe to `domoticz/out` and filter by IDX. |
-| **Homing after receiving setpoint** | `on` (default): performs full homing before moving to new setpoint (most accurate). `off`: performs a small wake-jiggle instead (faster, less mechanical wear). |
-| **Home Assistant MQTT Discovery** | `on` (default): automatically creates a climate entity in Home Assistant. |
-| **HTTP API token** | Token required for POST requests to `/api`. Leave empty to disable writes. Type `clear` to remove an existing token. |
-| **MQTT publish interval** | How often temperature is published in seconds. Default: `30`. |
+| **Domoticz IDX temperature** | Virtual sensor IDX for temperature. `0` = disabled. |
+| **Domoticz IDX setpoint** | Virtual sensor IDX for setpoint. `0` = disabled. |
+| **Domoticz gateway OUT mode** | `index` (default) = `domoticz/out/{idx}`. `flat` = `domoticz/out`, filtered by IDX. |
+| **Homing after receiving setpoint** | `on` = full homing before move (accurate). `off` = small jiggle (faster, less wear). |
+| **Home Assistant MQTT Discovery** | `on` = auto-creates a climate entity in HA. |
+| **HTTP API token** | Required for POST requests. Leave empty to disable writes. |
+| **MQTT publish interval** | How often temperature is published (seconds). Default: `30`. |
 
-### Re-opening the portal
+**[→ Full setup instructions with screenshots](https://nastythermostat.cc/setup)**
 
-From the on-device menu: **5. WiFi setup → Start WiFi portal (reboot)**
-
-Or hold the encoder button for 5 seconds at boot.
+Re-open the portal anytime: **Menu → 5. WiFi setup → Start WiFi portal**, or hold the encoder button for 5 seconds at boot.
 
 ---
 
 ## MQTT topics
 
-Topics are based on the device name (configurable). Default: `NastyThermostatXXXXXX`
+Topics use the device name (configurable in portal). Default: `NastyThermostatXXXXXX`
 
 | Topic | Direction | Description |
 |---|---|---|
 | `{deviceName}/out/temp` | Publish | Current temperature (°C) |
 | `{deviceName}/out/setpoint` | Publish (retained) | Current setpoint (°C) |
-| `{deviceName}/in/setpoint` | Subscribe | Set new setpoint (plain float, e.g. `21.5`) |
+| `{deviceName}/in/setpoint` | Subscribe | Set new setpoint (float, e.g. `21.5`) |
 | `{deviceName}/out/availability` | Publish (retained) | `online` / `offline` (LWT) |
 | `{deviceName}/out/action` | Publish (retained) | `heating` or `idle` |
-| `{deviceName}/out/mode` | Publish (retained) | `heat` (always, for HA) |
+| `{deviceName}/out/mode` | Publish (retained) | `heat` (fixed, for HA compatibility) |
 
 ### Domoticz
-
-NastyThermostat subscribes to Domoticz setpoint changes and publishes temperature and setpoint back to Domoticz using the configured IDX numbers.
 
 ```
 Subscribe: domoticz/out/{idxSetpoint}   (index mode, default)
@@ -197,7 +179,7 @@ Publish:   domoticz/in
 
 ### Home Assistant
 
-With MQTT Discovery enabled, a `climate` entity is automatically created in HA showing current temperature, setpoint, and heating/idle action. No manual YAML needed.
+With MQTT Discovery enabled, a `climate` entity is automatically created — no manual YAML needed.
 
 ---
 
@@ -205,13 +187,12 @@ With MQTT Discovery enabled, a `climate` entity is automatically created in HA s
 
 The device hosts a REST API on port 80.
 
-### GET /api — Status
+### GET /api
 
 ```bash
 curl http://192.168.x.x/api
 ```
 
-Response:
 ```json
 {
   "device_name": "NastyThermostat123456",
@@ -225,7 +206,7 @@ Response:
 }
 ```
 
-### POST /api — Update settings
+### POST /api
 
 Requires token (set in WiFiManager portal).
 
@@ -237,9 +218,9 @@ curl -X POST http://192.168.x.x/api \
 
 | Field | Type | Description |
 |---|---|---|
-| `token` | string | **Required**. API token set in portal. |
+| `token` | string | **Required**. API token from portal. |
 | `setpoint` | float | New setpoint in °C (9.0–32.0) |
-| `offset` | float | Temperature offset correction (-10.0 to 10.0) |
+| `offset` | float | Temperature offset correction (−10.0 to 10.0) |
 | `stepSize` | float | Encoder step size: `0.1`, `0.2`, `0.5` or `1.0` |
 | `steps_per_degree` | float | Calibration: microsteps per °C (10–2000) |
 
@@ -249,14 +230,14 @@ curl -X POST http://192.168.x.x/api \
 
 Press the encoder button to open the menu. Rotate to navigate, press to select.
 
-| Menu item | Description |
+| Item | Description |
 |---|---|
-| 1. Homing | Perform a manual homing cycle (moves to mechanical stop, resets position to 0) |
-| 2. Temperature offset | Correct DS18B20 reading. Turn to adjust ±10°C, press to save. |
-| 3. Steps/degree | Calibration value in microsteps/°C. Turn to adjust, press to save. |
-| 4. Step size | Encoder step size: 0.1 / 0.2 / 0.5 / 1.0°C |
+| 1. Homing | Perform manual homing (moves to mechanical stop, resets position to 0) |
+| 2. Temperature offset | Correct DS18B20 reading ±10°C, press to save |
+| 3. Steps/degree | Calibration: microsteps per °C, press to save |
+| 4. Step size | Encoder resolution: 0.1 / 0.2 / 0.5 / 1.0°C |
 | 5. WiFi setup | Open WiFiManager portal (device reboots into AP mode) |
-| 6. Status | Shows firmware version, WiFi IP, MQTT connection status |
+| 6. Status | Shows firmware version, IP address, MQTT status |
 | 7. Back | Return to main screen |
 
 ---
@@ -266,46 +247,49 @@ Press the encoder button to open the menu. Rotate to navigate, press to select.
 The main screen shows:
 - **Large center**: current setpoint (°C)
 - **Bottom left**: measured temperature (°C)
-- **Top right**: WiFi status icon (green = connected, red = disconnected)
+- **Top right**: WiFi status icon — green = connected, red = disconnected
 - **Background**: orange when heating (setpoint > temperature), black when idle
 
-Screen auto-off after 15 seconds of inactivity. Any encoder movement or motor activity wakes the display.
+Screen auto-off after 15 seconds of inactivity. Encoder movement or motor activity wakes the display.
 
 ---
 
 ## Calibration
 
-The default `steps_per_degree` value is **26.75 full-steps/°C** (= 856 microsteps at 1/32). This is based on the 138T/20T pulley ratio. If your Nest doesn't hit the right temperatures, adjust via:
+Default: **856 microsteps/°C** (= 26.75 full-steps, based on 138T/20T pulley ratio at 1/32 microstepping).
 
-- Menu item **3. Steps/degree**
-- Or via HTTP API: `{"token":"...","steps_per_degree": 856.0}`
+If your Nest doesn't hit the right temperatures, adjust via:
+- On-device menu → **3. Steps/degree**
+- HTTP API: `{"token":"...","steps_per_degree": 856.0}`
 
 ---
 
 ## Serial commands
 
-Connect via Serial Monitor at 115200 baud:
+Connect at **115200 baud**.
 
 | Command | Description |
 |---|---|
-| `?` or `h` | Show status banner (IP, MQTT, topics) |
+| `?` or `h` | Show status banner (IP, MQTT broker, topics) |
 | `i` | Show WiFi and MQTT connection status |
 
 ---
 
 ## Troubleshooting
 
-**Motor moves but Nest temperature is wrong**
+**Motor moves but Nest temperature is wrong**  
 → Adjust Steps/degree in menu or via API. Start with small increments.
 
-**WiFi not connecting**
-→ Check Serial Monitor output at 115200 baud. Verify status.
+**WiFi not connecting**  
+→ Check Serial Monitor at 115200 baud. Re-open portal via menu → **5. WiFi setup**.
 
-**MQTT not connecting**
-→ Check Serial Monitor output at 115200 baud. Verify broker IP and port in portal.
+**MQTT not connecting**  
+→ Verify broker IP and port in portal. Check Serial Monitor output.
 
-**DS18B20 reads 0°C or wrong temperature**
+**DS18B20 reads 0°C or wrong temperature**  
 → Check wiring on GPIO9. Use temperature offset in menu to correct.
+
+**[→ Setup guide — more help and troubleshooting](https://nastythermostat.cc/setup)**
 
 ---
 
